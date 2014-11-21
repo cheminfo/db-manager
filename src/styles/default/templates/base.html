@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ELN{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="/assets/css/main.css" />
+        <link rel="icon" href="/assets/favicon.png">
+    </head>
+    <body>
+        <header>
+            <div id="headerTitle">ELN</div>
+            <ul>
+                {% for i in menu %}
+                    <li><a href="{{ i.url }}">{{ i.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </header>
+        <div id="content">
+            <div id="leftPanel">{% include "./leftpanel.html" %}</div>
+            <div id="mainContent">
+                <h1>ELN</h1>
+                <div>{% block content %}{% endblock %}</div>
+            </div>
+        </div>
+        <div id="footer">Footer</div>
+    </body>
+</html>

@@ -1,10 +1,7 @@
-var manager = require('../');
+//global.Promise = require('bluebird');
 
-manager().then(function (koa) {
+var DBManager = require('../');
 
-    koa.listen(3000)
+var manager = new DBManager();
 
-}, function (err) {
-    console.log('error');
-    console.log(err);
-});
+manager.start();
