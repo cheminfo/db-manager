@@ -8,7 +8,8 @@ var gzip = require('koa-gzip'),
     session = require('koa-generic-session'),
     rt = require('koa-rt'),
     main = require('./main'),
-    middleware = require('./middleware');
+    middleware = require('./middleware'),
+    csrf = require('koa-csrf');
 
 module.exports = function*(app, options) {
 
@@ -23,18 +24,13 @@ module.exports = function*(app, options) {
         headerName: 'X-Response-Time'
     }));
 
-    middleware.style(app, options);
+    middleware.common(app, options);
 
     app.keys = ['key']; // TODO secret keys
     app.use(session());
 
-    // CSRF
-    var csrf = require('koa-csrf');
     csrf(app);
 
-// Local object for templates
-    var locals = require('koa-locals');
-    locals(app, {});
     app.use(function*(next) {
         this.locals._csrf = this.csrf;
         // this.locals._isLogged = this.isAuthenticated();

@@ -1,8 +1,10 @@
 var join = require('path').join,
     serve = require('koa-static'),
-    mount = require('koa-mount');
+    mount = require('koa-mount'),
+    locals = require('koa-locals'),
+    bodyparser = require('koa-bodyparser');
 
-exports.style = function(app, options) {
+exports.common = function(app, options) {
 
     var style = options.style || 'default';
     if (style.indexOf('/') == -1) {
@@ -22,5 +24,10 @@ exports.style = function(app, options) {
         cache: false,//'memory',
         ext: 'html'
     });
+
+    // Local object for templates
+    locals(app, {});
+
+    app.use(bodyparser());
 
 };

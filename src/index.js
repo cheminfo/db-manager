@@ -26,7 +26,7 @@ var install = require('./install'),
 // Default config
 var defaults = {
     data: join(__dirname, '../data'),
-    style: 'default',
+    common: 'default',
     hds: {},
     menu: [
         {

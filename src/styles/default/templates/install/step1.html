@@ -1,0 +1,46 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<h1>mongoDB parameters</h1>
+<form id="db-form" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="db-host">Host: </label><input type="text" id="db-host" name="host" value="{{ db.host }}" /><br><br>
+    <label for="db-port">Port: </label><input type="text" id="db-port" name="port" value="{{ db.port }}"  /><br><br>
+    <label for="db-username">Username: </label><input type="text" id="db-username" name="username" value="{{ db.username }}" /><br><br>
+    <label for="db-password">Password: </label><input type="password" id="db-password" name="password" value="{{ db.password }}" /><br><br>
+    <label for="db-name">Name: </label><input type="text" id="db-name" name="name" value="{{ db.name }}" /><br><br>
+    <button id="btn-check" type="button">Check DB connection</button>
+    <button id="btn-next" type="submit" disabled="disabled">Step 2</button>
+</form>
+<p id="connection-msg">
+
+</p>
+<script>
+    var $form = $('#db-form');
+    var $btnCheck = $('#btn-check');
+    var $btnNext = $('#btn-next');
+    var $connMsg = $('#connection-msg');
+    $btnCheck.on('click', function() {
+        var value = $form.serializeArray();
+        var data = {};
+        for(var i = 0; i < value.length; i++) {
+            data[value[i].name] = value[i].value;
+        }
+        $btnCheck.attr('disabled', 'disabled');
+        $.ajax({
+            type: 'POST',
+            url: 'checkDB',
+            data: data
+        }).then(function(result) {
+            $connMsg.html(result.message);
+            $btnCheck.removeAttr('disabled');
+            if(result.ok) {
+                $connMsg.css('color', 'green');
+                $btnNext.removeAttr('disabled');
+            } else {
+                $connMsg.css('color', 'red');
+                $btnNext.attr('disabled', 'disabled');
+            }
+        });
+    });
+</script>
+{% endblock %}

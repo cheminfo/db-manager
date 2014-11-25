@@ -41,7 +41,7 @@ if (typeof jQuery === 'undefined') {
     }
 
     for (var name in transEndEventNames) {
-      if (el.style[name] !== undefined) {
+      if (el.common[name] !== undefined) {
         return { end: transEndEventNames[name] }
       }
     }
