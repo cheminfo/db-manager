@@ -34,4 +34,4 @@ schema.statics.exists = function*(email) {
     return !!count;
 };
 
-var Model = module.exports = hds.customCollection('users', schema);
+var Model = module.exports = hds.customCollection('user_', schema);
