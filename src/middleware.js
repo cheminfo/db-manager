@@ -4,11 +4,12 @@ var join = require('path').join,
     locals = require('koa-locals'),
     bodyparser = require('koa-bodyparser');
 
-exports.common = function(app, options) {
+exports.common = function(app, usrDir) {
 
+    // TODO look for style in config
     var style = options.style || 'default';
     if (style.indexOf('/') == -1) {
-        style = join(__dirname, 'styles', style);
+        style = join(usrDir, 'styles', style);
     }
     app.use(mount('/assets', serve(join(style, 'assets'), {
         maxage: 0,

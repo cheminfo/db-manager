@@ -2,6 +2,6 @@
 
 var DBManager = require('../');
 
-var manager = new DBManager();
+var manager = new DBManager('/home/mzasso/node/db-manager/test/usr');
 
 manager.start();

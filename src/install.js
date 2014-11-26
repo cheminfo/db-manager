@@ -5,13 +5,14 @@ var Router = require('koa-router'),
     middleware = require('./middleware'),
     hds = require('hds'),
     mongodb = require('hds/node_modules/mongoose').mongo,//hds.mongo TODO change when hds is updated
-    validator = require('validator');
+    validator = require('validator'),
+    User = require('./models/user');
 
-module.exports = function*(app, options) {
+module.exports = function*(app, usrDir) {
 
     debug('loading install application');
 
-    middleware.common(app, options);
+    middleware.common(app, usrDir);
 
     var router = new Router();
 
@@ -104,14 +105,10 @@ module.exports = function*(app, options) {
         yield hds.init({
             database: db
         });
-        var User = hds.customCollection('users', new hds.Schema({
-            email: String,
-            password: String
-        }));
         var admin = new User({
-            email: mail,
-            password: pass
+            email: mail
         });
+        admin.changePassword(pass);
         yield admin.save.bind(admin);
     }
 
@@ -133,8 +130,8 @@ module.exports = function*(app, options) {
 
     app.use(router.middleware());
 
-    app.close = function(cb) {
-        cb();
+    app.close = function*() {
+        yield hds.close();
     };
 
 };

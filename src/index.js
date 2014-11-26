@@ -23,29 +23,10 @@ var co = require('co'),
 var install = require('./install'),
     load = require('./load');
 
-// Default config
-var defaults = {
-    data: join(__dirname, '../data'),
-    common: 'default',
-    hds: {},
-    menu: [
-        {
-            title: "Home",
-            page: "index",
-            url: "/"
-        },
-        {
-            title: "Test",
-            page: "test",
-            url: "/test"
-        }
-    ]
-};
-
 var sockets = {}, nextSocketId = 0;
 
-function Manager(options) {
-    this.options = extend(true, {}, defaults, options);
+function Manager(usrDir) {
+    this.usrDir = usrDir || join(__dirname, '../usr');
     this.started = false;
     this.restarting = true;
     this.server = null;
@@ -110,22 +91,21 @@ Manager.prototype.bindApp = function (app) {
 
 Manager.prototype.getApp = function () {
     var self = this;
-    var options = this.options;
     return co(function*() {
         var app = koa();
 
         // check if config file is present. If not, start installation process
         var installed = true;
         try {
-            var config = yield fs.readFile(join(options.data, 'config.json'));
+            var config = yield fs.readFile(join(self.usrDir, 'config.json'));
         } catch (e) {
             installed = false;
         }
 
         if(!installed) {
-            yield install(app, options);
+            yield install(app, self.usrDir);
         } else {
-            yield load(app, options);
+            yield load(app, self.usrDir);
         }
 
         self.app = app;

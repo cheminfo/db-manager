@@ -1,13 +1,12 @@
 var Router = require('koa-router');
 
-module.exports = function (app, options) {
+module.exports = function (app, usrDir) {
 
     var baseRouter = new Router();
 
-    var menu = options.menu;
-
     app.use(function*(next) {
 
+        /* TODO build menu
         var newMenu = [];
 
         for (var i = 0; i < menu.length; i++) {
@@ -16,14 +15,10 @@ module.exports = function (app, options) {
 
         this.locals.menu = newMenu;
 
+        */
+
         yield next;
 
-    });
-
-    menu.forEach(function (el) {
-        baseRouter.get(el.url, function*() {
-            yield this.render(el.page);
-        });
     });
 
     baseRouter.get('/restart', function*() {

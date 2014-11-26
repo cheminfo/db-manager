@@ -11,7 +11,7 @@ var gzip = require('koa-gzip'),
     middleware = require('./middleware'),
     csrf = require('koa-csrf');
 
-module.exports = function*(app, options) {
+module.exports = function*(app, usrDir) {
 
     debug('loading standard application');
 
@@ -24,7 +24,7 @@ module.exports = function*(app, options) {
         headerName: 'X-Response-Time'
     }));
 
-    middleware.common(app, options);
+    middleware.common(app, usrDir);
 
     app.keys = ['key']; // TODO secret keys
     app.use(session());
@@ -39,14 +39,16 @@ module.exports = function*(app, options) {
         yield next;
     });
 
-    main(app, options);
+    main(app, usrDir);
 
     debug('middlewares mounted');
 
+    // TODO look for config
+
     yield hds.init(options.hds);
 
-    app.close = function (cb) {
-        hds.close(cb);
+    app.close = function*() {
+        yield hds.close();
     };
 
     debug('hds ready');
