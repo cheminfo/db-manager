@@ -1,7 +1,15 @@
+/**
+ * This is the main user storage
+ */
 var Schema = require('hds').Schema,
     validator = require('validator'),
     crypto = require('../util/crypto'),
     hds = require('hds');
+
+var Roles = {
+    USER: 1,
+    ADMIN:2
+};
 
 var schema = new Schema({
     email: {
@@ -17,6 +25,10 @@ var schema = new Schema({
     password: {
         type: String,
         'default': crypto.getRandomSalt
+    },
+    role: {
+        type: Number,
+        'default': Roles.USER
     }
 });
 
@@ -35,3 +47,5 @@ schema.statics.exists = function*(email) {
 };
 
 var Model = module.exports = hds.customCollection('user_', schema);
+
+Model.Roles = Roles;

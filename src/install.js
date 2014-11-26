@@ -106,7 +106,8 @@ module.exports = function*(app, usrDir) {
             database: db
         });
         var admin = new User({
-            email: mail
+            email: mail,
+            role: User.Roles.ADMIN
         });
         admin.changePassword(pass);
         yield admin.save.bind(admin);
