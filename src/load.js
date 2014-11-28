@@ -31,6 +31,12 @@ module.exports = function*(app, usrDir) {
 
     csrf(app);
 
+    // Authentication
+    require('./util/auth');
+    var passport = require('koa-passport');
+    app.use(passport.initialize());
+    app.use(passport.session());
+
     app.use(function*(next) {
         this.locals._csrf = this.csrf;
         // this.locals._isLogged = this.isAuthenticated();

@@ -4,7 +4,7 @@ var Router = require('koa-router'),
     debug = require('debug')('db-manager:install'),
     middleware = require('./middleware'),
     hds = require('hds'),
-    mongodb = require('hds/node_modules/mongoose').mongo,//hds.mongo TODO change when hds is updated
+    mongodb = hds.mongo,
     validator = require('validator'),
     User = require('./models/user');
 
