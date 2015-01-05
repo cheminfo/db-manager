@@ -7,7 +7,7 @@ var join = require('path').join,
 exports.common = function(app, usrDir) {
 
     // TODO look for style in config
-    var style = options.style || 'default';
+    var style = /*options.style ||*/ 'default';
     if (style.indexOf('/') == -1) {
         style = join(usrDir, 'styles', style);
     }

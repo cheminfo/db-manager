@@ -20,7 +20,7 @@ var schema = new Schema({
 });
 
 schema.statics.createForName = function*(name) {
-    var doc = yield Model.findOne(name).exec();
+    var doc = yield Model.findById(name).exec();
     if (doc) {
         doc.set({
             token: crypto.getRandomSalt(),

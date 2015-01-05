@@ -44,6 +44,8 @@ Manager.prototype.start = function (port) {
     this.started = true;
     this.getApp().then(function (app) {
         self.bindApp(app);
+    }, function (err) {
+        console.log(err.stack)
     });
 };
 
