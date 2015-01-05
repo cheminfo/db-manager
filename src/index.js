@@ -42,7 +42,7 @@ Manager.prototype.start = function (port) {
     debug('starting server');
     this.port = (port | 0) || 3000;
     this.started = true;
-    this.getApp().then(function (app) {
+    return this.getApp().then(function (app) {
         self.bindApp(app);
     }, function (err) {
         console.log(err.stack)
