@@ -2,7 +2,7 @@
   "name": "db-manager",
   "version": "0.0.1",
   "description": "Easily build a secure website around a database",
-  "main": "src/index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha --reporter mocha-better-spec-reporter --recursive",
     "start": "sh start.sh"
