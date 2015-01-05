@@ -32,7 +32,7 @@ module.exports = function*(app, usrDir) {
 
     router.post('/step1', function*() {
         var body = this.request.body;
-        if(!body) {
+        if (!body) {
             return;
         }
         this.locals.db = {
@@ -47,7 +47,7 @@ module.exports = function*(app, usrDir) {
 
     router.post('/checkDB', function*() {
         var body = this.request.body;
-        if(!body) {
+        if (!body) {
             return;
         }
         var host = body.host || '127.0.0.1',
@@ -57,12 +57,12 @@ module.exports = function*(app, usrDir) {
             database = body.database;
         var connectionStr =
             'mongodb://' +
-            (username ? (username+':'+password+'@') : '') +
+            (username ? (username + ':' + password + '@') : '') +
             host +
             (port ? (':' + port) : '') +
             '/' + database;
         var dbOk = yield checkDB(connectionStr);
-        if(dbOk) {
+        if (dbOk) {
             this.body = {ok: true, message: 'mongoDB connection OK'};
         } else {
             this.body = {ok: false, message: 'unable to connect'};
@@ -72,7 +72,7 @@ module.exports = function*(app, usrDir) {
     function checkDB(connectionStr) {
         return function (callback) {
             mongodb.MongoClient.connect(connectionStr, function (err, db) {
-                if(err) {
+                if (err) {
                     return callback(null, false);
                 }
                 db.close(function () {
@@ -88,12 +88,12 @@ module.exports = function*(app, usrDir) {
 
     router.post('/step2', function*() {
         var body = this.request.body;
-        if(!body) {
+        if (!body) {
             return;
         }
         var mail = body.email,
             pass = body.password;
-        if(!validator.isEmail(mail)) {
+        if (!validator.isEmail(mail)) {
             this.body = 'Not an email';
         } else {
             yield createDB(this.locals.db, mail, pass);
@@ -116,7 +116,7 @@ module.exports = function*(app, usrDir) {
     router.get('/finish', function*() {
         this.body = 'Installation done. Restarting server...';
 
-        if(!(yield fs.exists(options.data))) {
+        if (!(yield fs.exists(options.data))) {
             yield fs.mkdir(options.data);
         }
 
@@ -131,8 +131,8 @@ module.exports = function*(app, usrDir) {
 
     app.use(router.middleware());
 
-    app.close = function*() {
-        yield hds.close();
+    app.close = function () {
+        return hds.close();
     };
 
 };

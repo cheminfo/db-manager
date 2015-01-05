@@ -53,8 +53,8 @@ module.exports = function*(app, usrDir) {
 
     yield hds.init(options.hds);
 
-    app.close = function*() {
-        yield hds.close();
+    app.close = function () {
+        return hds.close();
     };
 
     debug('hds ready');
