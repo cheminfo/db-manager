@@ -31,7 +31,7 @@ module.exports = function*(app, usrDir) {
 
     // TODO look for config
 
-    yield hds.init(app.manager.config.db);
+    yield hds.init(app.config.db);
     debug('hds ready');
 
     app.close = function () {

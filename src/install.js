@@ -127,10 +127,10 @@ module.exports = function*(app) {
             yield fs.mkdir(app.manager.dir.usr);
         }
 
-        app.manager.config.db = db;
-        app.manager.config.version = app.manager.version;
+        app.config.db = db;
+        app.config.version = app.manager.version;
 
-        yield fs.writeFile(join(app.manager.dir.usr, 'config.json'), JSON.stringify(app.manager.config, null, 2));
+        yield fs.writeFile(join(app.manager.dir.usr, 'config.json'), JSON.stringify(app.config, null, 2));
 
         var self = this;
         setTimeout(function () {

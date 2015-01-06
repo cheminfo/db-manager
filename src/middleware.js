@@ -15,7 +15,7 @@ exports.common = function(app) {
     }));
 
     var session = require('koa-generic-session');
-    app.keys = ['key']; // TODO secret keys
+    app.keys = [app.config.secret];
     app.use(session());
 
     var csrf = require('koa-csrf');

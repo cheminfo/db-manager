@@ -84,8 +84,8 @@ Manager.prototype.getApp = co.wrap(function*() {
     var app = koa();
     this.app = app;
     app.manager = this;
-    var config = this.config;
-    if(!config.version) {
+    app.config = this.config;
+    if(!this.config.version) {
         yield install(app);
     } /*
      else if (config.version !== this.version) {
