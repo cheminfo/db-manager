@@ -1,27 +1,24 @@
 var join = require('path').join,
-    serve = require('koa-static'),
-    mount = require('koa-mount'),
-    bodyparser = require('koa-bodyparser'),
-    gzip = require('koa-gzip'),
-    session = require('koa-generic-session'),
-    rt = require('koa-rt'),
-    csrf = require('koa-csrf'),
-    flash = require('koa-flash');
+    mount = require('koa-mount');
 
 exports.common = function(app) {
 
+    var gzip = require('koa-gzip');
     app.use(gzip({
         minLength: 150
     }));
 
+    var rt = require('koa-rt');
     app.use(rt({
         timer: Date,
         headerName: 'X-Response-Time'
     }));
 
+    var session = require('koa-generic-session');
     app.keys = ['key']; // TODO secret keys
     app.use(session());
 
+    var csrf = require('koa-csrf');
     csrf(app);
 
     app.use(function*(next) {
@@ -30,12 +27,14 @@ exports.common = function(app) {
         yield next;
     });
 
+    var flash = require('koa-flash');
     app.use(flash());
 
     // TODO look for style in config
-    var style = /*options.style ||*/ 'default';
+    var style = 'default';
     style = join(__dirname, 'styles', style);
 
+    var serve = require('koa-static');
     app.use(mount('/assets', serve(join(style, 'assets'), {
         maxage: 0,
         hidden: false,
@@ -51,6 +50,7 @@ exports.common = function(app) {
         ext: 'html'
     });
 
+    var bodyparser = require('koa-bodyparser');
     app.use(bodyparser());
 
 };
