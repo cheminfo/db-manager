@@ -53,4 +53,22 @@ exports.common = function(app) {
     var bodyparser = require('koa-bodyparser');
     app.use(bodyparser());
 
+    app.use(function*(next) {
+        try {
+            yield next;
+            if (this.status === 404 && !this.body) {
+                yield this.render('errors/404');
+            }
+        } catch(err) {
+            this.status = err.status || 500;
+            app.emit('error', err, this);
+            if (app.manager.debug) {
+                this.state.fullError = String(err.stack).replace(/[\r\n]+/g, '<br>');
+            }
+            yield this.render('errors/500');
+        }
+    });
+
+
+
 };
