@@ -41,22 +41,32 @@ Manager.prototype.restart = function () {
     this.restarting = true;
     console.log('Restarting...');
     var self = this;
-    self.server.close(function () {
-        debug('server closed');
-        self.app.close().then(function () {
-            debug('app closed');
-            self.getApp().then(function (app) {
-                self.running = false;
-                self.bindApp(app);
-            });
+    this.close().then(function () {
+        self.getApp().then(function (app) {
+            self.running = false;
+            self.bindApp(app);
         });
     });
-    debug('closing remaining sockets');
-    for (var socketId in sockets) {
-        if(sockets.hasOwnProperty(socketId)) {
-            sockets[socketId].destroy();
+};
+
+Manager.prototype.close = function () {
+    debug('closing app');
+    var self = this;
+    return new Promise(function (resolve) {
+        self.server.close(function () {
+            debug('server closed');
+            self.app.close().then(function () {
+                debug('app closed');
+                resolve();
+            });
+        });
+        debug('closing remaining sockets');
+        for (var socketId in sockets) {
+            if(sockets.hasOwnProperty(socketId)) {
+                sockets[socketId].destroy();
+            }
         }
-    }
+    });
 };
 
 Manager.prototype.bindApp = function (app) {

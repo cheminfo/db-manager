@@ -46,7 +46,23 @@ try {
 var DBManager = require('./src/index');
 var manager = new DBManager(config, debug);
 
-manager.start().catch(function (error) {
+manager.start().then(function() {
+    var readline = require('readline');
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rl.on('line', function (line) {
+        switch(line) {
+            case 'r':
+                return manager.restart();
+            case 'q':
+                manager.close();
+                rl.close();
+                break;
+        }
+    });
+}, function (error) {
     console.error(error.stack);
     process.exit(1);
 });
