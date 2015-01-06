@@ -20,8 +20,8 @@ module.exports = function*(app, usrDir) {
     app.use(passport.session());
 
     app.use(function*(next) {
-        // this.state._isLogged = this.isAuthenticated();
-        // this.state._user = this.req.user;
+        this.state._isLogged = this.isAuthenticated();
+        this.state._user = this.req.user;
         yield next;
     });
 

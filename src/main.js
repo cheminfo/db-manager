@@ -1,6 +1,6 @@
 var Router = require('koa-router');
 
-module.exports = function (app, usrDir) {
+module.exports = function (app) {
 
     var baseRouter = new Router();
 
@@ -23,10 +23,6 @@ module.exports = function (app, usrDir) {
 
     baseRouter.get('/', function*() {
         yield this.render('index')
-    });
-
-    baseRouter.get('/restart', function*() {
-        this.app.manager.restart();
     });
 
     app.use(baseRouter.middleware());
