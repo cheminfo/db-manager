@@ -8,19 +8,24 @@ var Router = require('koa-router'),
     validator = require('validator'),
     User = require('./models/user');
 
-module.exports = function*(app, usrDir) {
+module.exports = function*(app) {
 
     debug('loading install application');
 
-    middleware.common(app, usrDir);
+    middleware.common(app);
 
     var router = new Router();
 
-    app.context.locals.db = {
+    var db = {
         host: 'localhost',
         name: 'hds',
         port: 27017
     };
+
+    app.use(function*(next) {
+        this.state.db = db;
+        yield next;
+    });
 
     router.get('/', function*() {
         yield this.render('install/index');
@@ -35,7 +40,7 @@ module.exports = function*(app, usrDir) {
         if (!body) {
             return;
         }
-        this.locals.db = {
+        db = {
             host: body.host,
             port: parseInt(body.port) || 27017,
             username: body.username,
@@ -94,9 +99,10 @@ module.exports = function*(app, usrDir) {
         var mail = body.email,
             pass = body.password;
         if (!validator.isEmail(mail)) {
-            this.body = 'Not an email';
+            this.flash = { notEmailMessage: 'Not an email', notEmailValue: mail };
+            this.redirect('/step2');
         } else {
-            yield createDB(this.locals.db, mail, pass);
+            yield createDB(db, mail, pass);
             this.redirect('/finish');
         }
     });
@@ -116,11 +122,14 @@ module.exports = function*(app, usrDir) {
     router.get('/finish', function*() {
         this.body = 'Installation done. Restarting server...';
 
-        if (!(yield fs.exists(options.data))) {
-            yield fs.mkdir(options.data);
+        if (!(yield fs.exists(app.manager.dir.usr))) {
+            yield fs.mkdir(app.manager.dir.usr);
         }
 
-        yield fs.writeFile(join(options.data, 'config.json'), '{}');
+        app.manager.config.db = db;
+        app.manager.config.version = app.manager.version;
+
+        yield fs.writeFile(join(app.manager.dir.usr, 'config.json'), JSON.stringify(app.manager.config, null, 2));
 
         var self = this;
         setTimeout(function () {

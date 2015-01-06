@@ -4,32 +4,14 @@ var hds = require('hds'),
     debug = require('debug')('db-manager:app');
 
 // Middleware
-var gzip = require('koa-gzip'),
-    session = require('koa-generic-session'),
-    rt = require('koa-rt'),
-    main = require('./main'),
-    middleware = require('./middleware'),
-    csrf = require('koa-csrf');
+var main = require('./main'),
+    middleware = require('./middleware');
 
 module.exports = function*(app, usrDir) {
 
     debug('loading standard application');
 
-    app.use(gzip({
-        minLength: 150
-    }));
-
-    app.use(rt({
-        timer: Date,
-        headerName: 'X-Response-Time'
-    }));
-
     middleware.common(app, usrDir);
-
-    app.keys = ['key']; // TODO secret keys
-    app.use(session());
-
-    csrf(app);
 
     // Authentication
     require('./util/auth');
@@ -38,10 +20,8 @@ module.exports = function*(app, usrDir) {
     app.use(passport.session());
 
     app.use(function*(next) {
-        this.locals._csrf = this.csrf;
-        // this.locals._isLogged = this.isAuthenticated();
-        // this.locals._user = this.req.user;
-        this.locals._host = this.protocol + '://' + this.host;
+        // this.state._isLogged = this.isAuthenticated();
+        // this.state._user = this.req.user;
         yield next;
     });
 
@@ -51,11 +31,11 @@ module.exports = function*(app, usrDir) {
 
     // TODO look for config
 
-    yield hds.init(options.hds);
+    yield hds.init(app.manager.config.db);
+    debug('hds ready');
 
     app.close = function () {
         return hds.close();
     };
 
-    debug('hds ready');
 };

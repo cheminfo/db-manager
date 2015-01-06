@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Setup administrator account</h1>
 <form id="admin-form" method="post" enctype="application/x-www-form-urlencoded">
-    <label for="admin-email">Email: </label><input type="text" id="admin-email" name="email" /><br><br>
+    <label for="admin-email">Email: </label><input type="text" id="admin-email" name="email" {% if flash.notEmailValue %}value="{{flash.notEmailValue}}"{% endif %} /><br>{{ flash.notEmailMessage }}<br>
     <label for="admin-password">Password: </label><input type="password" id="admin-password" name="password" /><br><br>
     <button id="btn-next" type="submit">Finish</button>
 </form>

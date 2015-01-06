@@ -21,6 +21,10 @@ module.exports = function (app, usrDir) {
 
     });
 
+    baseRouter.get('/', function*() {
+        yield this.render('index')
+    });
+
     baseRouter.get('/restart', function*() {
         this.app.manager.restart();
     });

@@ -2,8 +2,7 @@ var co = require('co'),
     koa = require('koa'),
     debug = require('debug')('db-manager:main'),
     http = require('http'),
-    join = require('path').join,
-    fs = require('mz/fs');
+    join = require('path').join;
 
 var install = require('./install'),
     load = require('./load');
@@ -13,8 +12,10 @@ var sockets = {}, nextSocketId = 0;
 function Manager(config, debug) {
     this.config = config;
     this.debug = debug;
-    // TODO get rid of this
-    this.usrDir = __dirname;
+    this.dir = {
+        src: __dirname,
+        usr: join(__dirname, '../usr')
+    };
     this.started = false;
     this.restarting = true;
     this.server = null;
@@ -70,40 +71,31 @@ Manager.prototype.bindApp = function (app) {
                 delete sockets[socketId];
             });
         });
-        self.server.on('error', function (e) {
-            reject(e);
-        });
+        self.server.on('error', reject);
         self.server.listen(self.port, function () {
             console.log('listening on port ' + self.port);
-            resolve();
             self.restarting = false;
+            resolve();
         });
     });
 };
 
-Manager.prototype.getApp = function () {
-    var self = this;
-    return co(function*() {
-        var app = koa();
+Manager.prototype.getApp = co.wrap(function*() {
+    var app = koa();
+    this.app = app;
+    app.manager = this;
+    var config = this.config;
+    if(!config.version) {
+        yield install(app);
+    } /*
+     else if (config.version !== this.version) {
+     yield upgrade(app);
+     }*/ else {
+        yield load(app);
+    }
+    return app;
+});
 
-        // check if config file is present. If not, start installation process
-        var installed = true;
-        try {
-            var config = yield fs.readFile(join(self.usrDir, 'config.json'));
-        } catch (e) {
-            installed = false;
-        }
-
-        if(!installed) {
-            yield install(app, self.usrDir);
-        } else {
-            yield load(app, self.usrDir);
-        }
-
-        self.app = app;
-        app.manager = self;
-        return app;
-    });
-};
+Manager.prototype.version = 1;
 
 module.exports = Manager;

@@ -1,3 +1,4 @@
+global.Promise = require('bluebird');
 // Check support for ES6 generators
 var generator = 'function*test(){}';
 try {
@@ -32,10 +33,10 @@ process.env.MONGOOSE_DISABLE_STABILITY_WARNING = true;
 // Look for configuration file
 var config;
 try {
-    config = require('./config/config.json');
+    config = require('./usr/config.json');
 } catch (e) {
     try {
-        config = require('./config/config.default.json');
+        config = require('./src/config.default.json');
     } catch (e) {
         console.error('No configuration file found. Did you erase the default one ? :(');
         process.exit(1);

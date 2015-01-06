@@ -1,16 +1,41 @@
 var join = require('path').join,
     serve = require('koa-static'),
     mount = require('koa-mount'),
-    locals = require('koa-locals'),
-    bodyparser = require('koa-bodyparser');
+    bodyparser = require('koa-bodyparser'),
+    gzip = require('koa-gzip'),
+    session = require('koa-generic-session'),
+    rt = require('koa-rt'),
+    csrf = require('koa-csrf'),
+    flash = require('koa-flash');
 
-exports.common = function(app, usrDir) {
+exports.common = function(app) {
+
+    app.use(gzip({
+        minLength: 150
+    }));
+
+    app.use(rt({
+        timer: Date,
+        headerName: 'X-Response-Time'
+    }));
+
+    app.keys = ['key']; // TODO secret keys
+    app.use(session());
+
+    csrf(app);
+
+    app.use(function*(next) {
+        this.state._csrf = this.csrf;
+        this.state._host = this.protocol + '://' + this.host;
+        yield next;
+    });
+
+    app.use(flash());
 
     // TODO look for style in config
     var style = /*options.style ||*/ 'default';
-    if (style.indexOf('/') == -1) {
-        style = join(usrDir, 'styles', style);
-    }
+    style = join(__dirname, 'styles', style);
+
     app.use(mount('/assets', serve(join(style, 'assets'), {
         maxage: 0,
         hidden: false,
@@ -25,9 +50,6 @@ exports.common = function(app, usrDir) {
         cache: false,//'memory',
         ext: 'html'
     });
-
-    // Local object for templates
-    locals(app, {});
 
     app.use(bodyparser());
 
