@@ -6,7 +6,8 @@ var Router = require('koa-router'),
     hds = require('hds'),
     mongodb = hds.mongo,
     validator = require('validator'),
-    User = require('./models/user');
+    User = require('./models/user'),
+    mount = require('koa-mount');
 
 module.exports = function*(app) {
 
@@ -47,7 +48,7 @@ module.exports = function*(app) {
             password: body.password,
             name: body.name
         };
-        this.redirect('/step2');
+        this.redirect('/install/step2');
     });
 
     router.post('/checkDB', function*() {
@@ -99,11 +100,11 @@ module.exports = function*(app) {
         var mail = body.email,
             pass = body.password;
         if (!validator.isEmail(mail)) {
-            this.flash = { notEmailMessage: 'Not an email', notEmailValue: mail };
-            this.redirect('/step2');
+            this.flash = {notEmailMessage: 'Not an email', notEmailValue: mail};
+            this.redirect('/install/step2');
         } else {
             yield createDB(db, mail, pass);
-            this.redirect('/finish');
+            this.redirect('/install/finish');
         }
     });
 
@@ -138,7 +139,13 @@ module.exports = function*(app) {
 
     });
 
-    app.use(router.middleware());
+    var base = new Router();
+    base.get('/', function*() {
+        this.redirect('/install');
+    });
+    app.use(base.middleware());
+
+    app.use(mount('/install', router.middleware()));
 
     app.close = function () {
         return hds.close();

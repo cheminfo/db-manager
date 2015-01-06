@@ -23,10 +23,10 @@ passport.use(new LocalStrategy(function (username, password, done) {
             var hash = crypto.getPasswordHash(password, user.salt);
             if (hash === user.password) { // Success
                 done(null, user);
-            } else { // No match
+            } else { // Wrong password
                 done(null, false, errMessage);
             }
-        } else { // Use not found
+        } else { // User not found
             done(null, false, errMessage);
         }
     });
