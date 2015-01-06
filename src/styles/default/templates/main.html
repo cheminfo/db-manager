@@ -2,7 +2,7 @@
 
 {% block header %}
     <header>
-        <div id="headerTitle">ELN</div>
+        <div id="headerTitle">DB-Manager</div>
         <ul>
             {% for i in menu %}
             <li><a href="{{ i.url }}">{{ i.title }}</a></li>
@@ -20,8 +20,9 @@
         </p>
         {% else %}
         <form method="post" action="/login">
+            {{ flash.loginMessage }}<br>
             <input type="hidden" name="_csrf" value="{{ _csrf }}" />
-            <label for="user">Username </label><input type="text" id="user" name="username" /><br>
+            <label for="user">Username </label><input type="text" id="user" name="username" {% if flash.loginMail %}value="{{ flash.loginMail }}"{% endif %} /><br>
             <label for="pass">Password </label><input type="password" id="pass" name="password" /><br>
             <input type="submit" value="Login" />
         </form>

@@ -10,9 +10,6 @@ passport.deserializeUser(function (id, done) {
     User.findById(id, done);
 });
 
-var errMessage = {
-    message: 'Wrong username or password'
-};
 var LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(function (username, password, done) {
 
@@ -24,10 +21,10 @@ passport.use(new LocalStrategy(function (username, password, done) {
             if (hash === user.password) { // Success
                 done(null, user);
             } else { // Wrong password
-                done(null, false, errMessage);
+                done(null, false);
             }
         } else { // User not found
-            done(null, false, errMessage);
+            done(null, false);
         }
     });
 

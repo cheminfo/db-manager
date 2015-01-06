@@ -1,0 +1,14 @@
+{% extends '../main.html' %}
+{% block content %}
+<h2>Register</h2>
+<p>
+    Welcome, {{ mail }} !<br>
+    To finish the registration process, please create enter a password for your account :
+</p>
+<form method="post" action="">
+    <input type="hidden" name="token" value="{{ token }}" />
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+    <input type="password" name="password" /><br>
+    <input type="submit" value="Finish" />
+</form>
+{% endblock %}

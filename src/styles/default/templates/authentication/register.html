@@ -1,0 +1,9 @@
+{% extends '../main.html' %}
+{% block content %}
+<h2>Register</h2>
+<form method="post" action="">
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+    <label for="email">Email</label><input type="text" id="email" name="email" {% if flash.notEmailValue %}value="{{flash.notEmailValue}}"{% endif %} />{{ flash.notEmailMessage }}<br>
+    <input type="submit" value="Register" />
+</form>
+{% endblock %}

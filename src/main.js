@@ -1,11 +1,9 @@
-var Router = require('koa-router');
+var publicRoutes = require('./routes/public');
+var authRoutes = require('./routes/authentication');
 
 module.exports = function (app) {
 
-    var baseRouter = new Router();
-
     app.use(function*(next) {
-
         /* TODO build menu
         var newMenu = [];
 
@@ -18,13 +16,9 @@ module.exports = function (app) {
         */
 
         yield next;
-
     });
 
-    baseRouter.get('/', function*() {
-        yield this.render('index')
-    });
-
-    app.use(baseRouter.middleware());
+    app.use(publicRoutes.middleware());
+    app.use(authRoutes.middleware());
 
 };

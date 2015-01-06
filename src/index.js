@@ -2,7 +2,8 @@ var co = require('co'),
     koa = require('koa'),
     debug = require('debug')('db-manager:main'),
     http = require('http'),
-    join = require('path').join;
+    join = require('path').join,
+    mailer = require('./util/mailer');
 
 var install = require('./install'),
     load = require('./load');
@@ -95,6 +96,7 @@ Manager.prototype.getApp = co.wrap(function*() {
     this.app = app;
     app.manager = this;
     app.config = this.config;
+    mailer.init(this);
     if(!this.config.version) {
         yield install(app);
     } /*
